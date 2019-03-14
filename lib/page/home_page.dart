@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:wanma_sample/common/utils/common_utils.dart';
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:wanma_sample/common/redux/wm_state.dart';
+import 'package:wanma_sample/common/utils/navigator_utils.dart';
 
 ///主页
 
@@ -113,95 +118,141 @@ class HomeDrawer extends StatelessWidget {
   }
 
   //主题切换
-  showThemeDialog(BuildContext context) {
-    List<Color> list = [
-      Colors.brown,
-      Colors.blue,
-      Colors.teal,
-      Colors.amber,
-      Colors.blueGrey,
-      Colors.deepOrange,
+  showThemeDialog(BuildContext context,Store store) {
+    List<String> listStr = [
+      '默认主题',
+      '主题一',
+      '主题二',
+      '主题三',
+      '主题四',
+      '主题五',
+      '主题六',
     ];
+    List<Color> listColor = CommonUtils.getThemeListColor();
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: Container(
+            width: 250.0,
+            height: 400.0,
+            padding: EdgeInsets.all(4.0),
+            margin: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(4.0)),
+            ),
+            child: ListView.builder(
+              itemCount: listStr.length,
+              itemBuilder: (context,index) {
+                return RaisedButton(
+                  padding: new EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
+                  textColor: Colors.white,
+                  color: listColor != null ? listColor[index] : Theme.of(context).primaryColor,
+                  child: Flex(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    direction: Axis.horizontal,
+                    children: <Widget>[
+                      Text(listStr[index],style: TextStyle(fontSize: 14.0,),maxLines: 2,),
+                    ],
+                    ),
+                  onPressed: (){
+                    Navigator.pop(context);
+                    CommonUtils.pushTheme(store, index);
+                  },
+                );
+              },
+            ),
+          ),
+        );
+      }
+    );
   }
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      //侧边栏按钮
-      child: Container(
-        color: Theme.of(context).primaryColor,
-        child: SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: Material(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  UserAccountsDrawerHeader(
-                    accountName: Text('王振',style: TextStyle(fontSize: 20.0,color: Colors.white),),
-                    currentAccountPicture: GestureDetector(
-                      onTap: (){},
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage('images/logo.png'),
-                      ),
+    return Material(
+      child: StoreBuilder<WMState>(
+          builder: (context,store){
+            return Drawer(
+              //侧边栏按钮
+              child: Container(
+                color: Theme.of(context).primaryColor,
+                child: SingleChildScrollView(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height,
                     ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('设置参数'),
-                    onTap: (){
-                      //TODO
-                    },
-                  ),
-                  ListTile(
-                    title: Text('修改密码'),
-                    onTap: (){
-                      //TODO
-                    },
-                  ),
-                  ListTile(
-                    title: Text('切换主题'),
-                    onTap: (){
-                      //TODO
-                    },
-                  ),
-                  ListTile(
-                    title: Text('问题反馈'),
-                    onTap: (){
-                      //TODO
-                    },
-                  ),
-                  ListTile(
-                    title: Text('检测更新'),
-                    onTap: (){
-                      //TODO
-                    },
-                  ),
-                  ListTile(
-                    title: RaisedButton(
-                      padding: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
-                      textColor: Colors.white,
-                      color: Colors.redAccent,
-                      child: Flex(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        direction: Axis.horizontal,
+                    child: Material(
+                      color: Colors.white,
+                      child: Column(
                         children: <Widget>[
-                          Text('退出登录',style: TextStyle(fontSize: 20.0),maxLines: 1,),
+                          UserAccountsDrawerHeader(
+                            accountName: Text('王振',style: TextStyle(fontSize: 20.0,color: Colors.white),),
+                            currentAccountPicture: GestureDetector(
+                              onTap: (){},
+                              child: CircleAvatar(
+                                backgroundImage: AssetImage('images/logo.png'),
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          ListTile(
+                            title: Text('设置参数'),
+                            onTap: (){
+                              //TODO
+                            },
+                          ),
+                          ListTile(
+                            title: Text('修改密码'),
+                            onTap: (){
+                              //TODO
+                            },
+                          ),
+                          ListTile(
+                            title: Text('切换主题'),
+                            onTap: (){
+                              showThemeDialog(context,store);
+                            },
+                          ),
+                          ListTile(
+                            title: Text('问题反馈'),
+                            onTap: (){
+                              //TODO
+                            },
+                          ),
+                          ListTile(
+                            title: Text('检测更新'),
+                            onTap: (){
+                              //TODO
+                            },
+                          ),
+                          ListTile(
+                            title: RaisedButton(
+                              padding: EdgeInsets.only(left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
+                              textColor: Colors.white,
+                              color: Colors.redAccent,
+                              child: Flex(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                direction: Axis.horizontal,
+                                children: <Widget>[
+                                  Text('退出登录',style: TextStyle(fontSize: 20.0),maxLines: 1,),
+                                ],
+                              ),
+                              onPressed: (){
+                                NavigatorUtils.goLogin(context);
+                              },
+                            ),
+                          ),
                         ],
                       ),
-                      onPressed: (){
-                        //TODO
-                      },
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
+            );
+          },
       ),
     );
   }
@@ -240,7 +291,8 @@ class BusinessPage extends StatelessWidget {
         InkWell(
           child: _renderTab(Icons.store, '订单状态',size: 32.0,color: Colors.deepOrange),
           onTap: (){
-            Scaffold.of(context).showSnackBar(SnackBar(content: Text('暂未开通')));
+            NavigatorUtils.goGfzOrderStatus(context);
+//            Scaffold.of(context).showSnackBar(SnackBar(content: Text('暂未开通')));
           },
         ),
 
